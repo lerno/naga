@@ -91,7 +91,7 @@ This server would simply accept connections and write "Connect!" when a connecti
 How do we get the echo-part of the server then?
 
 
-== Observing a socket ==
+== Customizing our incoming socket ==
 
 Well, remember how the newConnection method gave a NIOSocket? We use that socket to register an observer and a reader:
 
@@ -111,13 +111,18 @@ public void newConnection(NIOSocket nioSocket)
 }
 }}}
 
-Let us look at the lines one at a time:
+Let us review this code.
+
+== Changing the default packet reader ==
 
 {{{
 nioSocket.setPacketReader(new AsciiLinePacketReader());
 }}}
 
-This registers a packet reader. A packet reader is responsible for converting the byte stream from the socket and chop them into digestible packets. This particular reader uses the byte value for '\n' as a delimiter, meaning if we send lines of text, this reader will break them down giving us one packet per line.
+This changes our default PacketReader for the new socket. A packet reader is responsible for converting the byte stream from the socket and chop them into digestible packets. This particular reader uses the byte value for '\n' as a delimiter, meaning if we send lines of text, this reader will break them down giving us one packet per line.
+
+
+== Registering an observer ==
 
 The next line:
 
