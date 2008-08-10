@@ -1,11 +1,14 @@
 #labels Example,Server,Featured
-Creating a simple echo server.
+= Creating a simple echo server. =
 
 = Introduction =
 
 This examples shows how to create a simple echo server using Naga.
 
 = Details =
+
+
+== Creating a NIOService ==
 
 The first thing we want to do is to create a new NIOService object. This object will hold our Selector and is our factory for creating Sockets.
 
@@ -40,7 +43,11 @@ new Thread()
 }.start();
 }}}
 
-Now we want to open a server socket on a port, which we do with the openServerSocket(port) call.
+
+== Opening a server socket ==
+
+Now we want to open a server socket on a port to receive connection. We do this with the openServerSocket(port) call.
+
 This code:
 
 {{{
@@ -83,7 +90,10 @@ This server would simply accept connections and write "Connect!" when a connecti
 
 How do we get the echo-part of the server then?
 
-Well, remember how the newConnection method gave a NIOSocket? We use that socket to register a listener and a reader:
+
+== Observing a socket ==
+
+Well, remember how the newConnection method gave a NIOSocket? We use that socket to register an observer and a reader:
 
 {{{
 public void newConnection(NIOSocket nioSocket)
@@ -119,6 +129,9 @@ Sets an observer for this socket. Just like in the server socket case, this will
 
 Obviously the reads are exactly what we want to hook into.
 
+
+== Writing to a socket ==
+
 Here is the code that reacts to a new packet:
 
 {{{
@@ -131,6 +144,10 @@ public void notifyReadPacket(NIOSocket socket, byte[] packet)
 
 We get a packet, in this case bytes representing text split by '\n' by our reader, so we send the text back using the the NIOSocket's write method, which is fully asynchronous.
 
+It is possible to register a PacketWriter that converts our packet before we send it, but for now we are happy to to get the default behaviour which is a writer that dispatches the raw bytes to the socket.
+
+
+== Code Listing ==
 
 Now we have all the code in place. Here is the full listing - run using "java EchoServer <port>"
 
@@ -147,25 +164,37 @@ public class EchoServer
     int port = Integer.parseInt(args[0]);
     try
     {
+      // Create the NIO service.
       NIOService service = new NIOService();
+
+      // Open a server socket.
       NIOServerSocket socket = service.openServerSocket(port);
+      
+      // Set our server socket observer.
       socket.setObserver(new ServerSocketObserverAdapter()
-      {
+      { 
         public void newConnection(NIOSocket nioSocket)
         {
-          // Set a string reader for incoming packets.
+          // Set a line reader for incoming packets.
           nioSocket.setPacketReader(new AsciiLinePacketReader());
+
+          // Set our socket observer.
           nioSocket.setObserver(new SocketObserverAdapter()
           {
             public void notifyReadPacket(NIOSocket socket, byte[] packet)
             {
+              // Write the bytes back to the client.
               socket.write(packet);
               socket.write("\n".getBytes());
             }
           });
         }
       });
+
+      // Set server socket accept policy to always accept new clients.
       socket.setConnectionAcceptor(ConnectionAcceptor.ALLOW);
+
+      // Handle IO until we quit the program.
       while (true)
       {
         service.selectBlocking();
@@ -173,6 +202,7 @@ public class EchoServer
     }
     catch (IOException e)
     {
+      // Ignore any IOExceptions in this simple implementation.
     }
   }
 }
