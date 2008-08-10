@@ -1,0 +1,17 @@
+How to write a packet reader.
+
+= Introduction =
+
+Naga provides four different types of readers:
+  * `RawPacketReader`
+  * `AsciiLinePacketReader`
+  * `ZeroDelimiterPacketReader`
+  * `RegularPacketReader`
+
+It is possible to roll your own packet reader, but to do so takes a little bit of knowledge of ByteBuffers and how Naga internally uses the packet reader.
+
+
+= Details =
+
+
+_Additional information forthcoming..._
