@@ -1,0 +1,13 @@
+#labels Phase-Implementation
+Compiling Naga from sources.
+
+= Introduction =
+
+How to compile naga from the sources.
+
+
+= Details =
+
+Naga itself has no external dependencies, so all code under src/main should compile fine under any circumstances.
+
+If you want to run the tests, you need to install easymock with classextensions, follow the instructions on http://www.easymock.org/ and remember that easymockclassextension.jar has a dependency on cglib.
