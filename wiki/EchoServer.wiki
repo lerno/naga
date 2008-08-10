@@ -1,0 +1,179 @@
+#labels Example,Server
+Creating a simple echo server.
+
+= Introduction =
+
+This examples shows how to create a simple echo server using Naga.
+
+= Details =
+
+The first thing we want to do is to create a new NIOService object. This object will hold our Selector and is our factory for creating Sockets.
+
+{{{
+NIOService service = new NIOService();
+}}}
+
+At this point nothing is running yet. 
+
+To run a pass and execute all NIO reads and writes queued up, we would write:
+ 
+{{{
+service.selectNonBlocking();
+}}}
+
+You can also make non-blocking calls, which is useful for putting the selector in its own thread.
+
+This code would start a thread, which would then run all IO for the NIOService until the service shuts down. 
+Note that you should never call the select calls from more than one thread at a time.
+
+{{{
+new Thread()
+{
+  public void run()
+  {
+    try
+    {
+      while (true) { service.selectBlocking(); }
+    }
+    catch (Exception e) { }
+  }
+}.start();
+}}}
+
+Now we want to open a server socket on a port, which we do with the openServerSocket(port) call.
+This code:
+
+{{{
+NIOServerSocket socket = service.openServerSocket(3366);
+}}}
+
+Opens a server socket at port 3366. What you get back is a NIOServerSocket, which is a proxy for the real ServerSocket we just created.
+
+We want to add some behaviour to the socket, because right now it accepts no connections.
+
+First thing is that we want to set the observer for the socket. This will give us notifications when when connections fail, succeed and when the server socket itself goes down.
+
+We are only interested in the connects, so let us use the ServerSocketObserverAdapter to only handle connects.
+
+{{{
+socket.setObserver(new ServerSocketObserverAdapter()
+{
+  public void newConnection(NIOSocket nioSocket)
+  {
+    System.out.println("Connect!");
+  }
+});
+}}}
+
+Here our server would print "Connect!" every time a connection was accepted on 3366. We will want to change this code later to actually do some echoing.
+
+The second thing we need to do is to set an acceptor for the socket. This acceptor is given an IP and can decide if the connection should be accepted or denied. In our echo server case, we want all calls to be accepted, so we use a predefined acceptor for that.
+
+{{{
+socket.setConnectionAcceptor(ConnectionAcceptor.ALLOW);
+}}}
+
+At this point we could start reading on the NIOService like this:
+
+{{{
+while (true) { service.selectBlocking(); }
+}}}
+
+This server would simply accept connections and write "Connect!" when a connection was made.
+
+How do we get the echo-part of the server then?
+
+Well, remember how the newConnection method gave a NIOSocket? We use that socket to register a listener and a reader:
+
+{{{
+public void newConnection(NIOSocket nioSocket)
+{
+  // Set a string reader for incoming packets.
+  nioSocket.setPacketReader(new AsciiLinePacketReader());
+  nioSocket.setObserver(new SocketObserverAdapter()
+  {
+    public void notifyReadPacket(NIOSocket socket, byte[] packet)
+    {
+      socket.write(packet);
+      socket.write("\n".getBytes());
+    }
+  });
+}
+}}}
+
+Let us look at the lines one at a time:
+
+{{{
+nioSocket.setPacketReader(new AsciiLinePacketReader());
+}}}
+
+This registers a packet reader. A packet reader is responsible for converting the byte stream from the socket and chop them into digestible packets. This particular reader uses the byte value for '\n' as a delimiter, meaning if we send lines of text, this reader will break them down giving us one packet per line.
+
+The next line:
+
+{{{
+nioSocket.setObserver(new SocketObserverAdapter());
+}}}
+
+Sets an observer for this socket. Just like in the server socket case, this will run callbacks for various events that happen to the socket. Connects, disconnects and reads.
+
+Obviously the reads are exactly what we want to hook into.
+
+Here is the code that reacts to a new packet:
+
+{{{
+public void notifyReadPacket(NIOSocket socket, byte[] packet)
+{
+  socket.write(packet);
+  socket.write("\n".getBytes());
+}
+}}}
+
+We get a packet, in this case bytes representing text split by '\n' by our reader, so we send the text back using the the NIOSocket's write method, which is fully asynchronous.
+
+
+Now we have all the code in place. Here is the full listing - run using "java EchoServer <port>"
+
+{{{
+import naga.packetreader.AsciiLinePacketReader;
+import naga.*;
+
+import java.io.IOException;
+
+public class EchoServer
+{
+  public static void main(String... args)
+  {
+    int port = Integer.parseInt(args[0]);
+    try
+    {
+      NIOService service = new NIOService();
+      NIOServerSocket socket = service.openServerSocket(port);
+      socket.setObserver(new ServerSocketObserverAdapter()
+      {
+        public void newConnection(NIOSocket nioSocket)
+        {
+          // Set a string reader for incoming packets.
+          nioSocket.setPacketReader(new AsciiLinePacketReader());
+          nioSocket.setObserver(new SocketObserverAdapter()
+          {
+            public void notifyReadPacket(NIOSocket socket, byte[] packet)
+            {
+              socket.write(packet);
+              socket.write("\n".getBytes());
+            }
+          });
+        }
+      });
+      socket.setConnectionAcceptor(ConnectionAcceptor.ALLOW);
+      while (true)
+      {
+        service.selectBlocking();
+      }
+    }
+    catch (IOException e)
+    {
+    }
+  }
+}
+}}}
