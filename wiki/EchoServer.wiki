@@ -63,7 +63,7 @@ First thing is that we want to set the observer for the socket. This will give u
 We are only interested in the connects, so let us use the ServerSocketObserverAdapter to only handle connects.
 
 {{{
-socket.setObserver(new ServerSocketObserverAdapter()
+socket.listen(new ServerSocketObserverAdapter()
 {
   public void newConnection(NIOSocket nioSocket)
   {
@@ -100,7 +100,7 @@ public void newConnection(NIOSocket nioSocket)
 {
   // Set a string reader for incoming packets.
   nioSocket.setPacketReader(new AsciiLinePacketReader());
-  nioSocket.setObserver(new SocketObserverAdapter()
+  nioSocket.listen(new SocketObserverAdapter()
   {
     public void notifyReadPacket(NIOSocket socket, byte[] packet)
     {
@@ -122,15 +122,15 @@ nioSocket.setPacketReader(new AsciiLinePacketReader());
 This changes our default PacketReader for the new socket. A packet reader is responsible for converting the byte stream from the socket and chop them into digestible packets. This particular reader uses the byte value for '\n' as a delimiter, meaning if we send lines of text, this reader will break them down giving us one packet per line.
 
 
-== Registering an observer ==
+== Start listening to the socket ==
 
 The next line:
 
 {{{
-nioSocket.setObserver(new SocketObserverAdapter());
+nioSocket.listen(new SocketObserverAdapter());
 }}}
 
-Sets an observer for this socket. Just like in the server socket case, this will run callbacks for various events that happen to the socket. Connects, disconnects and reads.
+Registers the observer for the socket and starts listening for incoming packets. Just like in the server socket case, this will run callbacks for various events that happen to the socket. Connects, disconnects and reads.
 
 Obviously the reads are exactly what we want to hook into.
 
@@ -175,16 +175,16 @@ public class EchoServer
       // Open a server socket.
       NIOServerSocket socket = service.openServerSocket(port);
       
-      // Set our server socket observer.
-      socket.setObserver(new ServerSocketObserverAdapter()
+      // Set our server socket observer to listen to the server socket.
+      socket.listen(new ServerSocketObserverAdapter()
       { 
         public void newConnection(NIOSocket nioSocket)
         {
           // Set a line reader for incoming packets.
           nioSocket.setPacketReader(new AsciiLinePacketReader());
 
-          // Set our socket observer.
-          nioSocket.setObserver(new SocketObserverAdapter()
+          // Set our socket observer to listen to the new socket.
+          nioSocket.listen(new SocketObserverAdapter()
           {
             public void notifyReadPacket(NIOSocket socket, byte[] packet)
             {
