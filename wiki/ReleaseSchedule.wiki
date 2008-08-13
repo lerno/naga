@@ -1,0 +1,14 @@
+#labels Featured
+
+= Release Schedule for Naga =
+
+
+== Releases ==
+
+== 1.0 - Done ==
+ 
+First release to get something shipping.
+
+== 1.1 ==
+
+Full javadoc, packet readers extended to the planned the default set. Bug fixes.
