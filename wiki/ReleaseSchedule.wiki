@@ -8,6 +8,10 @@
  
 First release to get something shipping.
 
-== 1.1 - ETA 2008-08-20 ==
+== 1.1 - Done ==
 
 Full javadoc, packet readers extended to the planned the default set. Bug fixes.
+
+== 1.2 ==
+
+Feature requests.
