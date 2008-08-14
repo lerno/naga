@@ -100,29 +100,17 @@ Well, remember how the newConnection method gave a NIOSocket? We use that socket
 {{{
 public void newConnection(NIOSocket nioSocket)
 {
-  // Set a string reader for incoming packets.
-  nioSocket.setPacketReader(new AsciiLinePacketReader());
   nioSocket.listen(new SocketObserverAdapter()
   {
     public void notifyReadPacket(NIOSocket socket, byte[] packet)
     {
       socket.write(packet);
-      socket.write("\n".getBytes());
     }
   });
 }
 }}}
 
 Let us review this code.
-
-== Changing the default packet reader ==
-
-{{{
-nioSocket.setPacketReader(new AsciiLinePacketReader());
-}}}
-
-This changes our default PacketReader for the new socket. A packet reader is responsible for converting the byte stream from the socket and chop them into digestible packets. This particular reader uses the byte value for '\n' as a delimiter, meaning if we send lines of text, this reader will break them down giving us one packet per line.
-
 
 == Start listening to the socket ==
 
@@ -145,11 +133,10 @@ Here is the code that reacts to a new packet:
 public void notifyReadPacket(NIOSocket socket, byte[] packet)
 {
   socket.write(packet);
-  socket.write("\n".getBytes());
 }
 }}}
 
-We get a packet, in this case bytes representing text split by '\n' by our reader, so we send the text back using the the NIOSocket's write method, which is fully asynchronous.
+We get a packet, in this case we are relying on the underlying RawPacketReader to give us the last bunch of bytes we received from the client ([PacketReader read more about PacketReaders]) which we send back using NIOSocket's write method, which is fully asynchronous.
 
 It is possible to register a PacketWriter that converts our packet before we send it, but for now we are happy to to get the default behaviour which is a writer that dispatches the raw bytes to the socket.
 
@@ -159,7 +146,6 @@ It is possible to register a PacketWriter that converts our packet before we sen
 Now we have all the code in place. Here is the full listing - run using "java EchoServer <port>"
 
 {{{
-import naga.packetreader.AsciiLinePacketReader;
 import naga.*;
 
 import java.io.IOException;
@@ -182,8 +168,6 @@ public class EchoServer
       { 
         public void newConnection(NIOSocket nioSocket)
         {
-          // Set a line reader for incoming packets.
-          nioSocket.setPacketReader(new AsciiLinePacketReader());
 
           // Set our socket observer to listen to the new socket.
           nioSocket.listen(new SocketObserverAdapter()
@@ -192,7 +176,6 @@ public class EchoServer
             {
               // Write the bytes back to the client.
               socket.write(packet);
-              socket.write("\n".getBytes());
             }
           });
         }
