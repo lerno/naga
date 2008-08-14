@@ -5,6 +5,8 @@
 
 This examples shows how to create a simple echo server using Naga.
 
+Note that this example is slightly out of date for 1.1.
+
 = Details =
 
 
