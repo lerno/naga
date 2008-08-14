@@ -1,4 +1,6 @@
-How to write a packet reader.
+A packet reader is a class that converts the incoming byte stream into separate packets. 
+
+Since bytes sent from a client might get chopped up during transfer, a reader typically needs to buffer bytes until a complete packet is received.
 
 = Introduction =
 
