@@ -12,6 +12,10 @@ First release to get something shipping.
 
 Full javadoc, packet readers extended to the planned the default set. Bug fixes.
 
-== 1.2 ==
+== 1.2 - Done ==
+
+Single bug fix. Issue when using selectBlocking() and write() on different threads.
+
+== 1.3 - TBA ==
 
 Feature requests.
