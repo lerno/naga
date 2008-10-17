@@ -1,4 +1,17 @@
 #labels Featured
 = Things to watch out for =
 
-  * Remember that all NIO callbacks are done on the NIO thread, which means *no* I/O can happen while the callback is running. This means you should never make length or blocking calls as a response. In particular watch out for: `SocketObserver#connectionOpened(NIOSocket), SocketObserver#packetReceived(NIOSocket), ServerSocketObserver#newConnection(NIOSocket), ConnectionAcceptor#acceptConnection(InetSocketAddress)`
+=== Callbacks and blocking actions ===
+
+Remember that all NIO callbacks are done on the NIO thread, which means *no* I/O can happen while the callback is running. This means you should never make length or blocking calls as a response. 
+
+
+In particular watch out when implementing the following methods: 
+
+`SocketObserver#connectionOpened(NIOSocket)`
+
+`SocketObserver#packetReceived(NIOSocket)`
+
+`ServerSocketObserver#newConnection(NIOSocket)`
+
+`ConnectionAcceptor#acceptConnection(InetSocketAddress)`
