@@ -1,13 +1,3 @@
-#Things to watch out for.
+= Things to watch out for =
 
-= Introduction =
-
-Add your content here.
-
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+  * Remember that all NIO callbacks are done on the NIO thread, which means *no* I/O can happen while the callback is running. This means you should never make length or blocking calls as a response. In particular watch out for: `SocketObserver#connectionOpened(NIOSocket), SocketObserver#packetReceived(NIOSocket), ServerSocketObserver#newConnection(NIOSocket), ConnectionAcceptor#acceptConnection(InetSocketAddress)`
