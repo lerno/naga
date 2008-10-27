@@ -16,6 +16,10 @@ Full javadoc, packet readers extended to the planned the default set. Bug fixes.
 
 Single bug fix. Issue when using selectBlocking() and write() on different threads.
 
-== 1.3 - TBA ==
+== 1.3 - Done ==
+
+Default acceptor to allow all instead of deny all when creating a server socket. Expanded javadocs. Exposed wakeup() to interrupt selectBlocking().
+
+== 1.4 - TBA ==
 
 Feature requests.
