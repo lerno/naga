@@ -20,6 +20,6 @@ Single bug fix. Issue when using selectBlocking() and write() on different threa
 
 Default acceptor to allow all instead of deny all when creating a server socket. Expanded javadocs. Exposed wakeup() to interrupt selectBlocking().
 
-== 2.0 - TBA ==
+== 2.0 - 29/4 2009 ==
 
-Simple EventMachine to work with Naga. Feature requests.
+Simple EventMachine to work with Naga. Some improvement to javadoc.
