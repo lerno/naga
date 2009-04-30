@@ -1,0 +1,54 @@
+== A short introduction to EventMachine ==
+
+(For this example I was originally going to include an walk-through on how to write a chat server with login and idle timeouts using EventMachine, 
+but the code had a bit too little EventMachine functionality to be a good example, but if anyone is interested in the source code I can always 
+add it to the naga.examples package)
+
+EventMachine is a very thin wrapper around NIOServices that carries an internal thread. Both the NIOService and events will be executed on this single thread:
+
+{{{
+EventMachine eventMachine = new EventMachine();
+eventMachine.start();
+System.out.println(Thread.currentThread() + ": Scheduling an event to be executed on the event machine thread.");
+eventMachine.asyncExecute(new Runnable()
+{
+    public void run()
+    {
+        System.out.println(Thread.currentThread() + ": This is called on the event machine thread!");
+    }
+});
+}}}
+
+Here is output from a test run:
+{{{
+Thread[main,5,main]: Scheduling an event to be executed on the event machine thread.
+Thread[Thread-0,5,main]: This is called on the event machine thread!
+}}}
+
+We can schedule events to occur later:
+{{{
+final long time = System.currentTimeMillis();
+eventMachine.executeAt(new Runnable()
+{
+    public void run()
+    {
+        System.out.println("'ExecuteAt' Called after " + (System.currentTimeMillis() - time) + "ms.");
+    }
+}, new Date(time + 5000));
+eventMachine.executeLater(new Runnable()
+{
+    public void run()
+    {
+        System.out.println("'ExecuteLater' Called after " + (System.currentTimeMillis() - time) + "ms.");
+    }
+}, 10000);
+}}}
+
+This examples shows how an event can be scheduled to either run at a specific date or after a delay.  
+
+A test run on my machine gives the output:
+
+{{{
+'ExecuteAt' Called after 5000ms.
+'ExecuteLater' Called after 10002ms.
+}}}
