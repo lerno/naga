@@ -25,6 +25,8 @@ Thread[main,5,main]: Scheduling an event to be executed on the event machine thr
 Thread[Thread-0,5,main]: This is called on the event machine thread!
 }}}
 
+=== Scheduled Events ===
+
 We can schedule events to occur later:
 {{{
 final long time = System.currentTimeMillis();
@@ -51,4 +53,53 @@ A test run on my machine gives the output:
 {{{
 'ExecuteAt' Called after 5000ms.
 'ExecuteLater' Called after 10002ms.
+}}}
+
+=== Handling Slow/Blocking Code ===
+
+Since EventMachine runs all IO and event handling in a single thread it is not recommended to do any blocking or lengthy operations, just as with the NIOSocket callbacks.
+
+If a blocking or slow operation needs to be done, it should be deferrred to a separate thread or threadpool (look at the Executor classes for an easily available thread pool solution) and then posted back to the EventMachine using asyncExecute.
+
+For instance, imagine the following snippet of code:
+{{{
+boolean ok = validateUserPasswordFromDb(user, password);
+if (ok)
+{
+    loginUser(user);
+}
+else
+{
+    refuseLogin();
+}
+}}}
+
+In this case we might want to run the db validation in another thread, like this:
+
+{{{
+// On the EventMachine thread we spawn a separate thread to perform our query.
+Thread t = new Thread()
+{
+    public void run()
+    {
+        // We execute the lengthy query on the thread.
+        final boolean ok = validateUserPasswordFromDb(user, password);
+        // Now that we have answer, post an event to finish the validation.
+        eventMachine.asyncExecute(new Runnable()
+        {
+            public void run()
+            {
+                // This code is executed on the EventMachine thread
+                if (ok)
+                {
+                    loginUser(user);
+                }
+                else
+                {
+                    refuseLogin();
+                }
+            }
+        });
+    }
+}.start();
 }}}
