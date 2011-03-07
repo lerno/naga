@@ -26,9 +26,9 @@ Simple EventMachine to work with Naga. Some improvement to javadoc.
 
 == 3.0 - In Progress ==
 
-Possible features: 
-* SSL support
-* Callback on packet written.
-* Simplified PacketReader / PacketWriter
+Features: 
+  * SSL support (Beta)
+  * Callback on packet written.
+  * Simplified PacketReader / PacketWriter
 
 _3.0 Will not be 100% compatible with 1.x-2.x_
