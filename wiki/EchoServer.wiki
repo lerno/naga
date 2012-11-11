@@ -143,7 +143,7 @@ It is possible to register a PacketWriter that converts our packet before we sen
 
 == Code Listing ==
 
-Now we have all the code in place. Here is the full listing - run using "java EchoServer <port>"
+Now we have all the code in place. Here is the full listing - run using `"java EchoServer <port>"`
 
 {{{
 import naga.*;
