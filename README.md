@@ -25,3 +25,9 @@ socket.listen(myObserver);
 socket.write("Some message".getBytes());
 ```
 If you want more, see the [EchoServer example](https://github.com/lerno/naga/blob/master/Echoserver.md), or check out the javadoc.
+
+### Details for running naga
+
+Download naga.jar and put it in your classpath.
+
+The naga.jar has no external dependencies, but if you want to download the project and run tests, you will need easymock, see CompilingNaga.
