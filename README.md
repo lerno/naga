@@ -1,4 +1,4 @@
-#Naga is not a framework.
+## Naga is not a framework.
 
 Naga aims to be a very small NIO library that provides a handful of java classes to wrap the usual Socket and ServerSocket with asynchronous NIO counterparts (similar to NIO2 planned for Java 1.7).
 
@@ -9,7 +9,6 @@ Internally Naga is a straightforward NIO implementation without any threads or e
 Naga contains the code needed to get NIO up and running without having to code partially read buffers and setting various selection key flags.
 
 Here is an example opening a server socket:
-
 ```java
 NIOService service = new NIOService;
 NIOServerSocket serverSocket = service.openServerSocket(1234);
@@ -25,4 +24,4 @@ socket.listen(myObserver);
 // Asynchronous write by default:
 socket.write("Some message".getBytes());
 ```
-If you want more, see the EchoServer example, or check out the javadoc
+If you want more, see the [EchoServer example](https://github.com/lerno/naga/blob/master/Echoserver.md), or check out the javadoc.
