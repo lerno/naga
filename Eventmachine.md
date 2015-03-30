@@ -15,7 +15,7 @@ eventMachine.asyncExecute(new Runnable()
         System.out.println(Thread.currentThread() + ": This is called on the event machine thread!");
     }
 });
-```java
+```
 
 Here is output from a test run:
 
