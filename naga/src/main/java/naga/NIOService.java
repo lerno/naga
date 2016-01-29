@@ -49,20 +49,20 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Example use:
  * <p>
  * Using the server socket:
- * <code><pre>
+ * <pre><code>
  * NIOService service = new NIOService;
  * NIOServerSocket serverSocket = service.openServerSocket(1234);
  * serverSocket.setConnectionAcceptor(myAcceptor);
  * serverSocket.listen(myObserver);
- * </pre></code>
+ * </code></pre>
  * Using regular sockets:
- * <code><pre>
+ * <pre><code>
  * NIOService service = new NIOService;
  * NIOSocket socket = service.openSocket("www.google.com", 1234);
  * socket.listen(myObserver);
  * // Asynchronous write by default:
  * socket.write("Some message".getBytes());
- * </pre></code>
+ * </code></pre>
  *
  * @author Christoffer Lerno
  */
@@ -441,7 +441,7 @@ public class NIOService
 
     /**
      * Returns the new shared buffer size.
-     * <p/>
+     * <p>
      * <em>This method is *not* thread-safe.</em>
      *
      * @return the current buffer size, which is the largest packet that can be read.
@@ -592,7 +592,7 @@ public class NIOService
         catch (Exception e)
         {
             System.err.println("Failed to log the following exception to the exception observer:");
-            System.err.println(e);
+            System.err.println(e.getMessage());
             e.printStackTrace();
         }
     }

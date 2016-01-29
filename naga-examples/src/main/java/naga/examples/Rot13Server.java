@@ -28,10 +28,13 @@ import naga.packetwriter.AsciiLinePacketWriter;
 import java.io.IOException;
 
 /**
+ * <p>
  * Creates a Rot13Server that takes a line of text and returns the Rot13 version of the
  * text.
- * <p/>
+ * <p>
+ * <p>
  * Run using {@code java naga.examples.Rot13Server [port]}.
+ * </p>
  *
  * @author Christoffer Lerno
  */
@@ -114,7 +117,8 @@ public class Rot13Server
 			socket.setConnectionAcceptor(ConnectionAcceptor.ALLOW);
 
 			// Read IO until process exits.
-			while (true)
+			//noinspection InfiniteLoopStatement
+			for (;;)
 			{
 				service.selectBlocking();
 			}

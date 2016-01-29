@@ -59,7 +59,7 @@ public class DelimiterPacketReader implements PacketReader
 	 * @param delimiter the byte value of the delimiter.
 	 * @param maxPacketSize the maximum number of bytes read before throwing an
 	 * IOException. -1 means the packet has no size limit.
-	 * @throws IllegalArgumentException if maxPacketSize < 1
+	 * @throws IllegalArgumentException if <code>maxPacketSize &lt; 1</code>
 	 */
 	public DelimiterPacketReader(byte delimiter, int maxPacketSize)
 	{

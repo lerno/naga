@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="naga" basedir="." default="build">
+<project name="naga" basedir="../" default="build">
 
 	<tstamp/>
 	<property file="version.properties"/>

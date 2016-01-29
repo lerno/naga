@@ -19,61 +19,56 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-package naga.packetreader;
+package naga.packetwriter;
 
 import naga.NIOUtils;
-import naga.PacketReader;
-import naga.exception.ProtocolViolationException;
+import naga.PacketWriter;
 
 import java.nio.ByteBuffer;
 
 /**
- * Reads packet of the format
+ * Writes packet of the format
  * <p>
  * <code>
- * [header 1-4 bytes] => content size
+ * [header 1-4 bytes] =&gt; content size
  * <br>
- * [content] => 0-255/0-65535/0-16777215/0-2147483646
+ * [content] =&gt; 0-255/0-65535/0-16777215/0-2147483646
  * </code>
  * <p>
  * Note that the maximum size for 4 bytes is a signed 32 bit int, not unsigned.
- * 
+ * <p>
+ * The packet writer will not validate outgoing packets, so make sure that
+ * the packet content size will fit in the header. I.e. make sure that if you have
+ * a 1 byte header, you do not send packets larger than 255 bytes, if two bytes, larger than 65535 and
+ * so on.
+ *
  * @author Christoffer Lerno
  */
-public class RegularPacketReader implements PacketReader
+public class RegularPacketWriter implements PacketWriter
 {
 	private final boolean m_bigEndian;
-    private final int m_headerSize;
+    private final ByteBuffer m_header;
 
 	/**
-	 * Creates a regular packet reader with the given header size.
+	 * Creates a regular packet writer with the given header size.
 	 *
 	 * @param headerSize the header size, 1 - 4 bytes.
 	 * @param bigEndian big endian (largest byte first) or little endian (smallest byte first)
 	 */
-	public RegularPacketReader(int headerSize, boolean bigEndian)
+	public RegularPacketWriter(int headerSize, boolean bigEndian)
 	{
 		if (headerSize < 1 || headerSize > 4) throw new IllegalArgumentException("Header must be between 1 and 4 bytes long.");
 		m_bigEndian = bigEndian;
-        m_headerSize = headerSize;
+        m_header = ByteBuffer.allocate(headerSize);
 	}
 
-    public byte[] nextPacket(ByteBuffer byteBuffer) throws ProtocolViolationException
+    public ByteBuffer[] write(ByteBuffer[] byteBuffers)
     {
-        if (byteBuffer.remaining() < m_headerSize) return null;
-        byteBuffer.mark();
-        int length = NIOUtils.getPacketSizeFromByteBuffer(byteBuffer, m_headerSize, m_bigEndian);
-        if (byteBuffer.remaining() >= length)
-        {
-            byte[] packet = new byte[length];
-            byteBuffer.get(packet);
-            return packet;
-        }
-        else
-        {
-            byteBuffer.reset();
-            return null;
-        }
+        m_header.clear();
+        NIOUtils.setPacketSizeInByteBuffer(m_header, m_header.capacity(),
+                                           (int)NIOUtils.remaining(byteBuffers), m_bigEndian);
+        m_header.flip();
+        return NIOUtils.concat(m_header, byteBuffers);
     }
 
 }

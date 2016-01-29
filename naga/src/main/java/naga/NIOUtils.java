@@ -54,7 +54,7 @@ public class NIOUtils
      *
      * @param byteBuffer the ByteBuffer to use.
      * @param headerSize the header size in bytes. 1-4.
-     * @param valueToEncode the value to encode, 0 <= value < 2^(headerSize * 8)
+     * @param valueToEncode the value to encode, <code>0 &lt;= value &lt; 2^(headerSize * 8)</code>
      * @param bigEndian if the encoding is big endian or not.
      * @throws IllegalArgumentException if the value is out of range for the given header size.
      */
@@ -81,7 +81,7 @@ public class NIOUtils
 	 *
      * @param buffer the byte array to set the header for
 	 * @param headerSize the header size in bytes. 1-4.
-	 * @param valueToEncode the value to encode, 0 <= value < 2^(headerSize * 8)
+	 * @param valueToEncode the value to encode, from <code>0 to 2^(headerSize * 8)</code>
 	 * @param bigEndian if the encoding is big endian or not.
 	 * @throws IllegalArgumentException if the value is out of range for the given header size.
 	 */

@@ -93,6 +93,7 @@ public class EventMachine
 	}
 
 	/**
+	 * <p>
 	 * Execute a runnable on the Event/NIO thread.
 	 * <p>
 	 * <em>This method is thread-safe.</em>
@@ -105,12 +106,14 @@ public class EventMachine
 	}
 
 	/**
+	 * <p>
 	 * Execute a runnable on the Event/NIO thread after a delay.
+	 * </p>
 	 * <p>
 	 * This is the primary way to execute delayed events, typically time-outs and similar
 	 * behaviour.
-	 * <p>
-	 * <em>This method is thread-safe.</em>
+	 * </p><p>
+	 * <em>This method is thread-safe.</em></p>
 	 *
 	 * @param runnable the runnable to execute after the given delay.
 	 * @param msDelay the delay until executing this runnable.
@@ -137,11 +140,15 @@ public class EventMachine
 		return action;
 	}
 	/**
+	 * <p>
 	 * Execute a runnable on the Event/NIO thread after at a certain time.
-	 * <p/>
+	 * </p>
+	 * <p>
 	 * This is the primary way to execute scheduled events.
-	 * <p/>
+	 * </p>
+	 * <p>
 	 * <em>This method is thread-safe.</em>
+	 * </p>
 	 *
 	 * @param runnable the runnable to execute at the given time.
 	 * @param date the time date when this runnable should execute.
@@ -154,13 +161,14 @@ public class EventMachine
 	}
 
 	/**
-	 * Sets the ExceptionObserver for this service.
 	 * <p>
+	 * Sets the ExceptionObserver for this service.
+	 * </p><p>
 	 * The observer will receive all exceptions thrown by the underlying NIOService
 	 * and by queued events.
-	 * <p>
+	 * </p><p>
 	 * <em>This method is thread-safe.</em>
-	 *
+	 * </p>
 	 * @param observer the observer to use, null will cause exceptions to log to stderr
 	 */
 	public void setObserver(ExceptionObserver observer)
@@ -181,9 +189,11 @@ public class EventMachine
 	}
 
 	/**
+	 * <p>
 	 * Causes the event machine to start running on a separate thread together with the
 	 * NIOService.
-	 * <p/>
+	 * </p>
+	 * <p>
 	 * Note that the NIOService should not be called (using {@link naga.NIOService#selectNonBlocking()} and related
 	 * functions) on another thread if the EventMachine is used.
 	 */
