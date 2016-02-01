@@ -32,7 +32,6 @@ import java.io.IOException;
  * Creates a Rot13Server that takes a line of text and returns the Rot13 version of the
  * text.
  * <p>
- * <p>
  * Run using {@code java naga.examples.Rot13Server [port]}.
  * </p>
  *
